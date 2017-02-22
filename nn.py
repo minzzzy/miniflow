@@ -3,17 +3,6 @@
 import numpy as np
 from miniflow import *
 
-#x, y, z = Input(), Input(), Input()
-#
-#add = Add(x,y,z)
-#mul = Mul(x,y,z)
-#
-#feed_dict = {x:10, y:20, z: 4}
-#graph = topological_sort(feed_dict)
-#output = forward_pass(add, graph)
-
-#print ("{} + {} + {} = {} (according to mingflow)".format(feed_dict[x], feed_dict[y], feed_dict[z], output))
-
 X, W, b = Input(), Input(), Input()
 y = Input()
 f = Linear(X, W, b)

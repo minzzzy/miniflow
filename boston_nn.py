@@ -39,11 +39,12 @@ feed_dict = {
     b2: b2_
 }
 
-epochs = 1000
+epochs = 100
+learning_rate = 0.1
 
 #Total number of examples
 m = X_.shape[0]
-batch_size = 30
+batch_size = 10
 steps_per_epoch = m // batch_size
 
 graph = topological_sort(feed_dict)
@@ -65,10 +66,11 @@ for i in range(epochs):
 
         forward_and_backward(graph)
 
-        sgd_update(trainalbes)
+        sgd_update(trainalbes, learning_rate)
 
         loss += graph[-1].value
-        # Accuracy
+        # Accuracy 
+        # I am not sure it is right. 
         predict = graph[-2].value
         predict = predict.flatten()
         error = (y.value - predict) < 0.5

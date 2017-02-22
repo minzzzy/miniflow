@@ -46,13 +46,11 @@ class Linear(Node):
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}
         for n in self.outbound_nodes:
-            #print (n.value)
             grad_cost = n.gradients[self]
-            ## matrix diff
             self.gradients[self.inbound_nodes[0]] += np.dot(grad_cost, self.inbound_nodes[1].value.T)
             self.gradients[self.inbound_nodes[1]] += np.dot(self.inbound_nodes[0].value.T, grad_cost)
             self.gradients[self.inbound_nodes[2]] += np.sum(grad_cost, axis=0, keepdims=False)
-        #print (self.gradients[self.inbound_nodes[0]])
+
 
 class Sigmoid(Node):
     def __init__(self, node):
@@ -66,11 +64,10 @@ class Sigmoid(Node):
 
     def backward(self):
         self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}
-        #print (self.gradients)
-        #print (self.outbound_nodes)
         for n in self.outbound_nodes:
             grad_cost = n.gradients[self]
             self.gradients[self.inbound_nodes[0]] += grad_cost*self.value*(1-self.value)
+
 
 class MSE(Node):
     def __init__(self, y, a):
@@ -83,7 +80,6 @@ class MSE(Node):
         self.error = y-a
         self.value = np.sum(np.square(self.error))/self.m
 
-
     def backward(self):
         self.gradients[self.inbound_nodes[0]] = (2/self.m)*self.error 
         self.gradients[self.inbound_nodes[1]] = (-2/self.m)*self.error 
@@ -91,14 +87,11 @@ class MSE(Node):
 
 def topological_sort(feed_dict):
     input_nodes = [ n for n in feed_dict.keys() ]
-    #print (feed_dict)
 
     G = {}
     nodes = [ n for n in input_nodes ]
-    #print (nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
-        #print (G)
         if n not in G:
             G[n] = { 'in': set(), 'out': set() }
         for m in n.outbound_nodes:
@@ -107,27 +100,21 @@ def topological_sort(feed_dict):
             G[n]['out'].add(m)
             G[m]['in'].add(n)
             nodes.append(m)
+
     L = []
     S = set(input_nodes)
     while len(S) > 0:
         n = S.pop()
         if isinstance(n, Input):
             n.value = feed_dict[n]
-            #print (n.value)
         L.append(n)
-        #print(L)
         for m in n.outbound_nodes:
             G[n]['out'].remove(m)
             G[m]['in'].remove(n)
             if len(G[m]['in']) == 0:
                 S.add(m)
-    #sys.exit()
     return L
 
-#def forward_pass(output_node, sorted_nodes):
-#    for n in sorted_nodes:
-#        n.forward()
-#    return output_node.value
 def forward_and_backward(graph):
     for n in graph:
         n.forward()
@@ -137,6 +124,4 @@ def forward_and_backward(graph):
 
 def sgd_update(trainables, learning_rate=0.2):
     for t in trainables:
-        #print (t.gradients[t])
-        #sys.exit()
         t.value -= learning_rate * t.gradients[t]
