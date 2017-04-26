@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 import numpy as np
 from sklearn.datasets import load_boston
 from sklearn.utils import shuffle, resample
