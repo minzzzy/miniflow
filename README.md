@@ -1,4 +1,4 @@
-# DL_miniflow  
+# miniflow  
 This follows the contents of the miniflow course of Deep Learning foundaion of Udacity.  
 Learn the principles of Tensorflow by creating a library called miniflow.  
   
