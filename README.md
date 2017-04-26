@@ -22,4 +22,4 @@ Epoch: 100, Loss: 6.556, Accuracy: 58.200
 ```
 You can change epochs, learning_rate and batch_size to decrease loss more fast.
 Check the file.
-- I want to get advice on accuracy.
+
