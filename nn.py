@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 import numpy as np
 from miniflow import *
 
