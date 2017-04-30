@@ -1,6 +1,7 @@
-# miniflow  
-This follows the contents of the miniflow course of Deep Learning foundaion of Udacity.  
-Learn the principles of Tensorflow by creating a library called miniflow.  
+# Miniflow  
+---
+Miniflow creates a small neural networks using NumPy for learning the fundamental abstract of TensorFlow.
+This is the contents of [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
   
 I'll use a Python class to represent a generic node.  
 And use Input, Linear, Sigmoid and MSE which are subclasses of Node.  
