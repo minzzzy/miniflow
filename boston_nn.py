@@ -2,13 +2,19 @@ import numpy as np
 from sklearn.datasets import load_boston
 from sklearn.utils import shuffle, resample
 from miniflow import *
+import sys
 
-# Load data
+## Load data
 data = load_boston()
 X_ = data['data']
 y_ = data['target']
 
-# Normalize data
+## Explore the data
+print("The number of (Datasets, Features) = ", X_.shape)
+print("X_[0] : ", X_[0])
+print("y_[0] : ", y_[0])
+
+## Normalize data
 X_ = (X_ -np.mean(X_, axis=0)) / np.std(X_,axis=0)
 
 n_features = X_.shape[1]
@@ -18,7 +24,7 @@ b1_ = np.zeros(n_hidden)
 W2_ = np.random.randn(n_hidden,1)
 b2_ = np.zeros(1)
 
-# Neural network
+## Neural network
 X, y = Input(), Input()
 W1, b1 = Input(), Input()
 W2, b2 = Input(), Input()
@@ -37,10 +43,10 @@ feed_dict = {
     b2: b2_
 }
 
-epochs = 100
-learning_rate = 0.1
+epochs = 1000
+learning_rate = 0.01
 
-#Total number of examples
+## Total number of examples
 m = X_.shape[0]
 batch_size = 10
 steps_per_epoch = m // batch_size
@@ -50,7 +56,7 @@ trainalbes = [W1, b1, W2, b2]
 
 print("Total number of examples = {}".format(m))
 
-# Train
+## Train
 for i in range(epochs):
     loss =0
     accuracy = 0

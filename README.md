@@ -1,13 +1,17 @@
 # Miniflow  
----
+
 Miniflow creates a small neural networks using NumPy for learning the fundamental abstract of TensorFlow.  
 This is the contents of [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
   
-I use a Python class to represent a generic node.  
+## Architecture
+I use a Python class to represent a generic node in miniflow.py 
 And use Input, Linear, Sigmoid and MSE which are subclasses of Node.  
 They have forward and backward steps.  
 
 The topological_sort() function implements topological sorting using Kahn's Algorithm.   
+
+## Simple neural networks
+![pic](./img/simple_nn.png)
   
 I train the network to use the Boston Housing dataset in boston_nn.py It is in the sklearn.datasets.
 You can see that loss decreases as epoch increases. 

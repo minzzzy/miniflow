@@ -1,22 +1,25 @@
-#! /usr/bin/python
-
 import numpy as np
 import sys
+import pprint
 
 class Node(object):
     def __init__(self, inbound_nodes=[]):
-        self.inbound_nodes = inbound_nodes
-        self.value = None
-        self.outbound_nodes = []
+        self.inbound_nodes = inbound_nodes  # Node(s) from which this Node receives values
+        self.outbound_nodes = []   # Node(s) to which this Node passes values
         self.gradients = {}
+        # For each inbound Node here, add this Node as an outbound Node to _that_ Node.
         for n in self.inbound_nodes:
             n.outbound_nodes.append(self)
+        self.value = None  # A calculated value
 
+    # Placeholder
     def forward(self):
-        raise NotImplemented
+        # Compute output value based on 'inbound_nodes' and store the result in self.value.
+        raise NotImplemented  # 상속받은 클래스는 이 함수를 구현해야 오류가 발생하지 않는다.
 
+    # Placeholder
     def backward(self):
-        raise NotImplemented
+        raise NotImplemented  # 상속받은 클래스는 이 함수를 구현해야 오류가 발생하지 않는다.
 
 
 class Input(Node):
@@ -44,12 +47,12 @@ class Linear(Node):
         self.value = np.dot(XX,WW) + bb        
 
     def backward(self):
-        self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}
+        self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}  # Initialize to 0
         for n in self.outbound_nodes:
             grad_cost = n.gradients[self]
-            self.gradients[self.inbound_nodes[0]] += np.dot(grad_cost, self.inbound_nodes[1].value.T)
-            self.gradients[self.inbound_nodes[1]] += np.dot(self.inbound_nodes[0].value.T, grad_cost)
-            self.gradients[self.inbound_nodes[2]] += np.sum(grad_cost, axis=0, keepdims=False)
+            self.gradients[self.inbound_nodes[0]] += np.dot(grad_cost, self.inbound_nodes[1].value.T)  # dL / dX = W_T
+            self.gradients[self.inbound_nodes[1]] += np.dot(self.inbound_nodes[0].value.T, grad_cost)  # dL / dW = X_T
+            self.gradients[self.inbound_nodes[2]] += np.sum(grad_cost, axis=0, keepdims=False)  # dL / db = 1
 
 
 class Sigmoid(Node):
@@ -60,13 +63,13 @@ class Sigmoid(Node):
         return 1./(1.+np.exp(-x))
 
     def forward(self):
-        self.value = self._sigmoid(self.inbound_nodes[0].value)
+        self.value = self._sigmoid(self.inbound_nodes[0].value)  # S = 1 / ( 1 + e**(-x))
 
     def backward(self):
-        self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}
+        self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}  # Initialize to 0 
         for n in self.outbound_nodes:
             grad_cost = n.gradients[self]
-            self.gradients[self.inbound_nodes[0]] += grad_cost*self.value*(1-self.value)
+            self.gradients[self.inbound_nodes[0]] += grad_cost*self.value*(1-self.value)  # (dC / dS) * (dS / dL)
 
 
 class MSE(Node):
@@ -78,18 +81,23 @@ class MSE(Node):
         a = self.inbound_nodes[1].value.reshape(-1,1)
         self.m = len(y)
         self.error = y-a
-        self.value = np.sum(np.square(self.error))/self.m
+        self.value = np.sum(np.square(self.error))/self.m  # C = SIGMA((y-a)**2) / m
 
     def backward(self):
-        self.gradients[self.inbound_nodes[0]] = (2/self.m)*self.error 
-        self.gradients[self.inbound_nodes[1]] = (-2/self.m)*self.error 
+        self.gradients[self.inbound_nodes[0]] = (2/self.m)*self.error  # dC / dy  
+        self.gradients[self.inbound_nodes[1]] = (-2/self.m)*self.error # dC / da
 
 
 def topological_sort(feed_dict):
     input_nodes = [ n for n in feed_dict.keys() ]
+    #pprint.pprint(feed_dict.keys())
+    #for node in input_nodes:
+    #    print(node, node.outbound_nodes)
 
     G = {}
     nodes = [ n for n in input_nodes ]
+    #print("G is")
+    #print(nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:
@@ -100,6 +108,11 @@ def topological_sort(feed_dict):
             G[n]['out'].add(m)
             G[m]['in'].add(n)
             nodes.append(m)
+            #print("G is")
+            #print(nodes)
+
+    #pprint.pprint(G)
+    #print("\n")
 
     L = []
     S = set(input_nodes)
@@ -108,18 +121,22 @@ def topological_sort(feed_dict):
         if isinstance(n, Input):
             n.value = feed_dict[n]
         L.append(n)
+        #pprint.pprint(L)
         for m in n.outbound_nodes:
+            #pprint.pprint(G)
+            #print("\n")
             G[n]['out'].remove(m)
             G[m]['in'].remove(n)
             if len(G[m]['in']) == 0:
                 S.add(m)
+    #pprint.pprint(G)
     return L
 
 def forward_and_backward(graph):
     for n in graph:
         n.forward()
 
-    for n in graph[::-1]:
+    for n in graph[::-1]:  # Extended slice - reverse order
         n.backward()
 
 def sgd_update(trainables, learning_rate=0.2):

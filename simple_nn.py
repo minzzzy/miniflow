@@ -1,11 +1,17 @@
 import numpy as np
 from miniflow import *
+import pprint
 
 X, W, b = Input(), Input(), Input()
 y = Input()
 f = Linear(X, W, b)
-a = Sigmoid(f)
-cost = MSE(y, a)
+s = Sigmoid(f)
+cost = MSE(y, s)
+#print("- X : ", X)
+#print("- y : ", y)
+#print("- f : ", f)
+#print("- Sigmoid : ", s)
+#print("- cost : ", cost)
 
 X_ = np.array([[-1., -2.], [-1, -2]])
 W_ = np.array([[2.],[3.]])
@@ -23,6 +29,10 @@ graph = topological_sort(feed_dict)
 
 forward_and_backward(graph)
 
+#print(X.gradients)
+#print(W.gradients)
+pprint.pprint(f.gradients)
 gradients = [t.gradients[t] for t in [X, y, W, b]]
 
-print (gradients)
+#print(cost.value)
+#print (gradients)
