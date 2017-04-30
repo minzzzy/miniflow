@@ -14,7 +14,7 @@ The topological_sort() function creates graph of neural networks by implementing
 
 ## Simple neural network
 The architecture of simple neural network(`simple_nn.py`).   
-![simple_nn](./img/simple_nn.png =150x200 )   
+![simple_nn](./img/simple_nn.png){:height="36px" width="36px"}   
 
 ```python
 from miniflow import *
