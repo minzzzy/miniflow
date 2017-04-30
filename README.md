@@ -4,18 +4,31 @@ Miniflow creates a small neural networks using NumPy for learning the fundamenta
 This is the contents of [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
   
 ## Architecture
-It uses a Python class to represent a generic node in miniflow.py 
-And use Input, Linear, Sigmoid and MSE which are subclasses of Node.  
+It uses a Python class(`miniflow.py`) to represent a generic node.    
+Input, Linear, Sigmoid and MSE are subclasses of Node.  
 They have forward and backward steps.  
 
-The topological_sort() function implements topological sorting using Kahn's Algorithm.   
+### Graph 
+The topological_sort() function creates graph of neural networks by implementing [topological sorting](http://pooh-explorer.tistory.com/51) using Kahn's Algorithm.     
+![Topological_sort](http://www.stoimen.com/blog/wp-content/uploads/2012/10/2.-Topological-Sort.png)
 
-## Simple neural networks
+## Simple neural network
+The architecture of simple neural network(`simple_nn.py`).   
+![simple_nn](./img/simple_nn.png)   
 
-![pic](./img/simple_nn.png)
+```python
+from miniflow import *
+
+X, W, b = Input(), Input(), Input()
+y = Input()
+l = Linear(X, W, b)
+s = Sigmoid(l)
+cost = MSE(y, s)
+```
   
-I train the network to use the Boston Housing dataset in boston_nn.py It is in the sklearn.datasets.
-You can see that loss decreases as epoch increases. 
+## Boston House Prices dataset
+I train the network to use the Boston Housing dataset(`boston_nn.py`).  
+
 ```shell
 Epoch: 10, Loss: 11.437, Accuracy: 59.000
 Epoch: 20, Loss: 10.335, Accuracy: 61.000
@@ -28,6 +41,3 @@ Epoch: 80, Loss: 6.665, Accuracy: 59.800
 Epoch: 90, Loss: 6.125, Accuracy: 62.600
 Epoch: 100, Loss: 6.556, Accuracy: 58.200
 ```
-You can change epochs, learning_rate and batch_size to decrease loss more fast.
-Check the file.
-

@@ -4,8 +4,8 @@ import pprint
 
 X, W, b = Input(), Input(), Input()
 y = Input()
-f = Linear(X, W, b)
-s = Sigmoid(f)
+l = Linear(X, W, b)
+s = Sigmoid(l)
 cost = MSE(y, s)
 #print("- X : ", X)
 #print("- y : ", y)

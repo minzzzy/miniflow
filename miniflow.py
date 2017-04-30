@@ -15,11 +15,12 @@ class Node(object):
     # Placeholder
     def forward(self):
         # Compute output value based on 'inbound_nodes' and store the result in self.value.
-        raise NotImplemented  # 상속받은 클래스는 이 함수를 구현해야 오류가 발생하지 않는다.
+        raise NotImplemented  # Subclasses must implement this function to avoid errors.
+    
 
     # Placeholder
     def backward(self):
-        raise NotImplemented  # 상속받은 클래스는 이 함수를 구현해야 오류가 발생하지 않는다.
+        raise NotImplemented  # Subclasses must implement this function to avoid errors.
 
 
 class Input(Node):
