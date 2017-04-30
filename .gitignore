@@ -2,4 +2,3 @@
 *.swp
 __pycache__/
 miniflow_scalar.py
-img/
