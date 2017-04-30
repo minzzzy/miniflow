@@ -4,7 +4,7 @@ Miniflow creates a small neural networks using NumPy for learning the fundamenta
 This is the contents of [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
   
 ## Architecture
-I use a Python class to represent a generic node in miniflow.py 
+It uses a Python class to represent a generic node in miniflow.py 
 And use Input, Linear, Sigmoid and MSE which are subclasses of Node.  
 They have forward and backward steps.  
 
