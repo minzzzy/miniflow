@@ -11,6 +11,7 @@ They have forward and backward steps.
 The topological_sort() function implements topological sorting using Kahn's Algorithm.   
 
 ## Simple neural networks
+
 ![pic](./img/simple_nn.png)
   
 I train the network to use the Boston Housing dataset in boston_nn.py It is in the sklearn.datasets.
