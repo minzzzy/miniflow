@@ -117,12 +117,13 @@ def topological_sort(feed_dict):
                 S.add(m)
     return L
 
-def forward_and_backward(graph):
+def forward_and_backward(graph, train=True):
     for n in graph:
         n.forward()
 
-    for n in graph[::-1]:  # Extended slice - reverse order
-        n.backward()
+    if (train):
+        for n in graph[::-1]:  # Extended slice - reverse order
+            n.backward()
 
 def sgd_update(trainables, learning_rate=0.2):
     for t in trainables:

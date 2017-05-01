@@ -51,7 +51,15 @@ s = Sigmoid(l)
 cost = MSE(y, s)
 ```
   
-## Boston House Prices dataset
+## [Boston House Prices dataset](http://scikit-learn.org/stable/datasets/#boston-house-prices-dataset)
 I train the network to use the Boston Housing dataset(`boston_nn.py`).  
-The model has  2 hidden layers. 
-> Epoch: 2000, Loss: 0.098, Accuracy: 96.60
+The model has  2 hidden layers and hyperparameters are
+> epochs = 2000
+learning_rate = 0.001
+batch_size = 10
+
+- Train  
+> Epoch: 2000, Loss: 1.175, Accuracy: 70.000  
+
+- Test  
+> Accuracy: 80.392
