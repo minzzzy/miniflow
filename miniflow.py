@@ -1,6 +1,4 @@
 import numpy as np
-import sys
-import pprint
 
 class Node(object):
     def __init__(self, inbound_nodes=[]):
@@ -91,14 +89,9 @@ class MSE(Node):
 
 def topological_sort(feed_dict):
     input_nodes = [ n for n in feed_dict.keys() ]
-    #pprint.pprint(feed_dict.keys())
-    #for node in input_nodes:
-    #    print(node, node.outbound_nodes)
 
     G = {}
     nodes = [ n for n in input_nodes ]
-    #print("G is")
-    #print(nodes)
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:
@@ -109,11 +102,6 @@ def topological_sort(feed_dict):
             G[n]['out'].add(m)
             G[m]['in'].add(n)
             nodes.append(m)
-            #print("G is")
-            #print(nodes)
-
-    #pprint.pprint(G)
-    #print("\n")
 
     L = []
     S = set(input_nodes)
@@ -122,15 +110,11 @@ def topological_sort(feed_dict):
         if isinstance(n, Input):
             n.value = feed_dict[n]
         L.append(n)
-        #pprint.pprint(L)
         for m in n.outbound_nodes:
-            #pprint.pprint(G)
-            #print("\n")
             G[n]['out'].remove(m)
             G[m]['in'].remove(n)
             if len(G[m]['in']) == 0:
                 S.add(m)
-    #pprint.pprint(G)
     return L
 
 def forward_and_backward(graph):

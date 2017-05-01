@@ -1,20 +1,45 @@
 # Miniflow  
 
-Miniflow creates a small neural networks using NumPy for learning the fundamental abstract of TensorFlow.  
-This is the contents of [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
+Miniflow is a library to build a small neural networks using NumPy for learning the fundamental abstract of TensorFlow.  
+It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
   
 ## Architecture
-It uses a Python class(`miniflow.py`) to represent a generic node.    
-Input, Linear, Sigmoid and MSE are subclasses of Node.  
+It uses a Python class to represent a generic node(`Node`).    
+
+```python
+class Node(object):
+    def __init__(self, inbound_nodes=[]):
+        self.inbound_nodes = inbound_nodes  # Node(s) from which this Node receives values
+        self.outbound_nodes = []   # Node(s) to which this Node passes values
+        self.gradients = {}
+        # For each inbound Node here, add this Node as an outbound Node to _that_ Node.
+        for n in self.inbound_nodes:
+            n.outbound_nodes.append(self)
+        self.value = None  # A calculated value
+
+    # Placeholder
+    def forward(self):
+        # Compute output value based on 'inbound_nodes' and store the result in self.value.
+        raise NotImplemented  # Subclasses must implement this function to avoid errors.
+    
+
+    # Placeholder
+    def backward(self):
+        raise NotImplemented  # Subclasses must implement this function to avoid errors.
+```
+
+Input, Linear, Sigmoid and MSE are subclasses of Node.   
 They have forward and backward steps.  
 
 ### Graph 
 The topological_sort() function creates graph of neural networks by implementing [topological sorting](http://pooh-explorer.tistory.com/51) using Kahn's Algorithm.     
-![Topological_sort](http://www.stoimen.com/blog/wp-content/uploads/2012/10/2.-Topological-Sort.png)
+![Topological_sort](http://www.stoimen.com/blog/wp-content/uploads/2012/10/2.-Topological-Sort.png)  
 
 ## Simple neural network
 The architecture of simple neural network(`simple_nn.py`).   
 ![simple_nn](./img/simple_nn.png)   
+
+This model is not trained. Check the calculation of gradients with one back propagation.  
 
 ```python
 from miniflow import *
@@ -28,16 +53,5 @@ cost = MSE(y, s)
   
 ## Boston House Prices dataset
 I train the network to use the Boston Housing dataset(`boston_nn.py`).  
-
-```shell
-Epoch: 10, Loss: 11.437, Accuracy: 59.000
-Epoch: 20, Loss: 10.335, Accuracy: 61.000
-Epoch: 30, Loss: 7.920, Accuracy: 59.000
-Epoch: 40, Loss: 8.254, Accuracy: 58.200
-Epoch: 50, Loss: 7.278, Accuracy: 60.800
-Epoch: 60, Loss: 8.962, Accuracy: 64.000
-Epoch: 70, Loss: 6.686, Accuracy: 60.600
-Epoch: 80, Loss: 6.665, Accuracy: 59.800
-Epoch: 90, Loss: 6.125, Accuracy: 62.600
-Epoch: 100, Loss: 6.556, Accuracy: 58.200
-```
+The model has  2 hidden layers. 
+> Epoch: 2000, Loss: 0.098, Accuracy: 96.60

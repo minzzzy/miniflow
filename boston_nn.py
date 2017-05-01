@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.datasets import load_boston
 from sklearn.utils import shuffle, resample
 from miniflow import *
-import sys
 
 ## Load data
 data = load_boston()
@@ -10,29 +9,35 @@ X_ = data['data']
 y_ = data['target']
 
 ## Explore the data
-print("The number of (Datasets, Features) = ", X_.shape)
-print("X_[0] : ", X_[0])
-print("y_[0] : ", y_[0])
+print("The number of (Datasets, Features) = {}".format(X_.shape))
+print("The first data is {}".format(X_[0]))
+print("The first target data is {}".format(y_[0]), "\n")
 
 ## Normalize data
 X_ = (X_ -np.mean(X_, axis=0)) / np.std(X_,axis=0)
 
 n_features = X_.shape[1]
-n_hidden = 10
-W1_ = np.random.randn(n_features,n_hidden)
-b1_ = np.zeros(n_hidden)
-W2_ = np.random.randn(n_hidden,1)
-b2_ = np.zeros(1)
+n_hidden1 = 26
+n_hidden2 = 52
+W1_ = np.random.randn(n_features,n_hidden1)
+b1_ = np.zeros(n_hidden1)
+W2_ = np.random.randn(n_hidden1,n_hidden2)
+b2_ = np.zeros(n_hidden2)
+W3_ = np.random.randn(n_hidden2,1)
+b3_ = np.zeros(1)
 
 ## Neural network
 X, y = Input(), Input()
 W1, b1 = Input(), Input()
 W2, b2 = Input(), Input()
+W3, b3 = Input(), Input()
 
 l1 = Linear(X, W1, b1)
 s1 = Sigmoid(l1)
 l2 = Linear(s1, W2, b2)
-cost = MSE(y, l2)
+s2 = Sigmoid(l2)
+l3 = Linear(s2, W3, b3)
+cost = MSE(y, l3)
 
 feed_dict = {
     X: X_,
@@ -40,21 +45,22 @@ feed_dict = {
     W1: W1_,
     b1: b1_,
     W2: W2_,
-    b2: b2_
+    b2: b2_,
+    W3: W3_,
+    b3: b3_
 }
 
-epochs = 1000
+## Hyperparameter
+epochs = 2000
 learning_rate = 0.01
+batch_size = 10
 
 ## Total number of examples
 m = X_.shape[0]
-batch_size = 10
 steps_per_epoch = m // batch_size
 
 graph = topological_sort(feed_dict)
-trainalbes = [W1, b1, W2, b2]
-
-print("Total number of examples = {}".format(m))
+trainalbes = [W1, b1, W2, b2, W3, b3]
 
 ## Train
 for i in range(epochs):
