@@ -1,10 +1,10 @@
 # Miniflow  
 
 Miniflow is a library to build a small neural networks using NumPy for learning the fundamental abstract of TensorFlow.  
-It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity.  
+It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity and I modified it to my own version.  
   
 ## Architecture
-It uses a Python class to represent a generic node(`Node`) and I modified it to my own version.  
+It uses a Python class to represent a generic node(`Node`).  
 
 ```python
 class Node(object):
