@@ -59,10 +59,9 @@ feed_dict = {
 }
 
 ## Hyperparameter
-epochs = 2000
-learning_rate = 0.001
+epochs = 5000
+learning_rate = 0.01
 batch_size = 10
-error_tol = 0.5
 
 ## Total number of examples
 m = X_train.shape[0]
@@ -71,12 +70,13 @@ steps_per_epoch = m // batch_size
 graph = topological_sort(feed_dict)
 trainalbes = [W1, b1, W2, b2, W3, b3]
 
+loss_list = []
+
 ## Train
 print("Start Training...")
 
 for i in range(epochs):
     loss =0
-    accuracy = 0
     for j in range(steps_per_epoch):
         # Randomly sample a batch of examples
         X_batch, y_batch = resample(X_train, y_train, n_samples=batch_size)
@@ -90,15 +90,10 @@ for i in range(epochs):
         sgd_update(trainalbes, learning_rate)
 
         loss += graph[-1].value
-        # Accuracy 
-        predict = graph[-2].value
-        predict = predict.flatten()
-        error = np.sum(y.value - predict) < error_tol
-        Accuracy = np.sum(error.astype(np.int))/len(y.value) * 100
-        accuracy += Accuracy
-    accuracy = accuracy/steps_per_epoch
+
     if (i+1) % batch_size == 0:
-        print ("Epoch: {}, Loss: {:.3f}, Accuracy: {:.3f}".format(i+1, loss/steps_per_epoch, accuracy))
+        loss_list.append(loss)
+        print ("Epoch: {}, Loss: {:.3f}".format(i+1, loss/steps_per_epoch))
 
 print("Finish Training!\n")
 
@@ -109,16 +104,12 @@ feed_dict[y] = y_test
 graph = topological_sort(feed_dict)
 
 forward_and_backward(graph, train=False)
-predict = graph[-2].value
-predict = predict.flatten()
-error = np.sum(y.value - predict) < error_tol
-Accuracy = np.sum(error.astype(np.int))/len(y.value) * 100
-print("Test Accuracy : {:.3f}".format(Accuracy))
+loss = graph[-1].value
+print("Test Loss : {:.3f}".format(loss))
 
 fig, ax = plt.subplots()
-x = np.arange(1, X_test.shape[0]+1)
-ax.plot(x, predict, label='Prediction')
-ax.plot(x, y_test, label='Test date')
+x = np.arange(len(loss_list))
+ax.plot(x, loss_list, label='Train Loss')
 ax.legend(loc='upper right', shadow=False)
 plt.show()
 

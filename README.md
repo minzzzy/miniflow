@@ -54,13 +54,13 @@ cost = MSE(y, s)
 ## [Boston House Prices dataset](http://scikit-learn.org/stable/datasets/#boston-house-prices-dataset)
 I train the network to use the Boston Housing dataset(`boston_nn.py`).  
 The model has  2 hidden layers and hyperparameters are
-> epochs = 2000  
+> epochs = 5000  
 learning_rate = 0.01  
 batch_size = 10  
 
 - Train  
-> Epoch: 2000, Loss: 1.175, Accuracy: 90.000  
+> Epoch: 5000, Loss: 0.015
 
 - Test  
-> Accuracy: 5.882
-> ???????????
+> Loss: 30.684  
+Overfitting by small dataset
