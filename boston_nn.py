@@ -93,7 +93,7 @@ for i in range(epochs):
         # Accuracy 
         predict = graph[-2].value
         predict = predict.flatten()
-        error = (y.value - predict) < error_tol
+        error = np.sum(y.value - predict) < error_tol
         Accuracy = np.sum(error.astype(np.int))/len(y.value) * 100
         accuracy += Accuracy
     accuracy = accuracy/steps_per_epoch
@@ -111,7 +111,7 @@ graph = topological_sort(feed_dict)
 forward_and_backward(graph, train=False)
 predict = graph[-2].value
 predict = predict.flatten()
-error = (y.value - predict) < error_tol
+error = np.sum(y.value - predict) < error_tol
 Accuracy = np.sum(error.astype(np.int))/len(y.value) * 100
 print("Test Accuracy : {:.3f}".format(Accuracy))
 
