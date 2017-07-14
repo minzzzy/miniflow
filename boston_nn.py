@@ -91,9 +91,10 @@ for i in range(epochs):
 
         loss += graph[-1].value
 
+    loss = loss/steps_per_epoch
     if (i+1) % batch_size == 0:
         loss_list.append(loss)
-        print ("Epoch: {}, Loss: {:.3f}".format(i+1, loss/steps_per_epoch))
+        print ("Epoch: {}, Loss: {:.3f}".format(i+1, loss))
 
 print("Finish Training!\n")
 
