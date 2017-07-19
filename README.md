@@ -63,4 +63,8 @@ batch_size = 10
 
 - Test  
 > Loss: 30.684  
-Overfitting by small dataset
+  
+Overfitting!  
+It may be due to the small number of data compared to the number of features.
+- dataset : 506
+- feature : 13
