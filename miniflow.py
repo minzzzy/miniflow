@@ -1,10 +1,11 @@
 import numpy as np
 
 class Node(object):
-    def __init__(self, inbound_nodes=[]):
+    def __init__(self, inbound_nodes=[], name=None):
         self.inbound_nodes = inbound_nodes  # Node(s) from which this Node receives values
         self.outbound_nodes = []   # Node(s) to which this Node passes values
         self.gradients = {}
+        self.name = name
         # For each inbound Node here, add this Node as an outbound Node to _that_ Node.
         for n in self.inbound_nodes:
             n.outbound_nodes.append(self)
@@ -14,7 +15,6 @@ class Node(object):
     def forward(self):
         # Compute output value based on 'inbound_nodes' and store the result in self.value.
         raise NotImplemented  # Subclasses must implement this function to avoid errors.
-    
 
     # Placeholder
     def backward(self):
@@ -22,8 +22,8 @@ class Node(object):
 
 
 class Input(Node):
-    def __init__(self):
-        Node.__init__(self)
+    def __init__(self, name=None):
+        Node.__init__(self, name=name)
 
     def forward(self, value=None):
         pass
@@ -36,8 +36,8 @@ class Input(Node):
 
 
 class Linear(Node):
-    def __init__(self, X, W, b):
-        Node.__init__(self, [X, W, b])
+    def __init__(self, X, W, b, name=None):
+        Node.__init__(self, [X, W, b], name=name)
 
     def forward(self):
         XX = self.inbound_nodes[0].value
@@ -55,8 +55,8 @@ class Linear(Node):
 
 
 class Sigmoid(Node):
-    def __init__(self, node):
-        Node.__init__(self, [node])
+    def __init__(self, node, name=None):
+        Node.__init__(self, [node], name=name)
     
     def _sigmoid(self, x):
         return 1./(1.+np.exp(-x))
@@ -72,8 +72,8 @@ class Sigmoid(Node):
 
 
 class MSE(Node):
-    def __init__(self, y, a):
-        Node.__init__(self, [y, a])
+    def __init__(self, y, a, name=None):
+        Node.__init__(self, [y, a], name=name)
 
     def forward(self):
         y = self.inbound_nodes[0].value.reshape(-1,1)
@@ -117,11 +117,11 @@ def topological_sort(feed_dict):
                 S.add(m)
     return L
 
-def forward_and_backward(graph, train=True):
+def forward_and_backward(graph, training=True):
     for n in graph:
         n.forward()
 
-    if (train):
+    if training:
         for n in graph[::-1]:  # Extended slice - reverse order
             n.backward()
 
