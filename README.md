@@ -1,10 +1,12 @@
 # Miniflow  
 
 Miniflow is a library to build a small neural networks using NumPy for learning the fundamental abstract of TensorFlow. 
-This came from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity and I modified it to my own version.  
-  
+It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity and I modify it to my own version, called Mingflow.  
+
+- version : python 3.6
+
 ## Architecture
-It uses a Python class to represent a generic node(`Node`).  
+It uses a Python class to represent a generic node(`Node`). The nodes perform both their own calculations and those of input edges.  
 
 ```python
 class Node(object):
@@ -34,6 +36,9 @@ They have forward and backward steps.
 ### Graph 
 The topological_sort() function creates graph of neural networks by implementing [topological sorting](http://pooh-explorer.tistory.com/51) using Kahn's Algorithm.     
 ![Topological_sort](http://www.stoimen.com/blog/wp-content/uploads/2012/10/2.-Topological-Sort.png)  
+
+- Define the graph of nodes and edges.
+- Propagation values through the graph.
 
 ## Simple neural network
 The architecture of simple neural network(`simple_nn.py`).   
