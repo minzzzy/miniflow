@@ -1,9 +1,7 @@
 # Miniflow  
 
 Miniflow is a library to build a small neural networks using NumPy for learning the fundamental abstract of TensorFlow. 
-It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity and I modify it to my own version, called Mingflow.  
-
-- version : python 3.6
+It is from [Deep Learning nanodegree foundation](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) in Udacity and I update it to my own version. 
 
 ## Architecture
 It uses a Python class to represent a generic node(`Node`). The nodes perform both their own calculations and those of input edges.  
@@ -34,7 +32,7 @@ Input, Linear, Sigmoid and MSE are subclasses of Node.
 They have forward and backward steps.  
 
 ### Graph 
-The topological_sort() function creates graph of neural networks by implementing [topological sorting](http://pooh-explorer.tistory.com/51) using Kahn's Algorithm.     
+The topological_sort() function creates graph of neural networks by implementing [topological sorting](https://en.wikipedia.org/wiki/Topological_sorting) using Kahn's Algorithm.     
 ![Topological_sort](http://www.stoimen.com/blog/wp-content/uploads/2012/10/2.-Topological-Sort.png)  
 
 - Define the graph of nodes and edges.
@@ -59,17 +57,5 @@ cost = MSE(y, s)
 ## [Boston House Prices dataset](http://scikit-learn.org/stable/datasets/#boston-house-prices-dataset)
 I train the network to use the Boston Housing dataset(`boston_nn.py`).  
 The model has  2 hidden layers and hyperparameters are
-> epochs = 5000  
-learning_rate = 0.01  
-batch_size = 10  
 
-- Train  
-> Epoch: 5000, Loss: 0.015
 
-- Test  
-> Loss: 30.684  
-  
-Overfitting!  
-It may be due to the small number of data compared to the number of features.
-- dataset : 506
-- feature : 13
