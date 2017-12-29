@@ -1,5 +1,6 @@
 import numpy as np
 
+## Node
 class Node(object):
     def __init__(self, inbound_nodes=[], name=None):
         self.inbound_nodes = inbound_nodes  # Node(s) from which this Node receives values
@@ -54,6 +55,7 @@ class Linear(Node):
             self.gradients[self.inbound_nodes[2]] += np.sum(grad_cost, axis=0, keepdims=False)  # dL / db = 1
 
 
+## Activation function
 class Sigmoid(Node):
     def __init__(self, node, name=None):
         Node.__init__(self, [node], name=name)
@@ -70,7 +72,24 @@ class Sigmoid(Node):
             grad_cost = n.gradients[self]
             self.gradients[self.inbound_nodes[0]] += grad_cost*self.value*(1-self.value)  # (dC / dS) * (dS / dL)
 
+class Relu(Node):
+    def __init__(self, node, name=None):
+        Node.__init__(self, [node], name=name)
+    
+    def forward(self):
+        self.value = self.inbound_nodes[0].value.copy()
+        self.value[self.value<0] = 0.
 
+    def backward(self):
+        self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}  # Initialize to 0 
+        for n in self.outbound_nodes:
+            grad_cost = n.gradients[self]
+            grad_value = self.value.copy()
+            grad_value[grad_value>0] = 1 
+            self.gradients[self.inbound_nodes[0]] += grad_cost * grad_value
+
+
+## Loss function
 class MSE(Node):
     def __init__(self, y, a, name=None):
         Node.__init__(self, [y, a], name=name)
@@ -86,21 +105,47 @@ class MSE(Node):
         self.gradients[self.inbound_nodes[0]] = (2/self.m)*self.error  # dC / dy  
         self.gradients[self.inbound_nodes[1]] = (-2/self.m)*self.error # dC / da
 
+class SoftmaxCrossEntropy(Node):
+    def __init__(self, y, a, name=None):
+        Node.__init__(self, [y, a], name=name)
 
+    def _softmax(self, x):
+        return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
+
+    def forward(self):
+        self.y = self.inbound_nodes[0].value
+        self.a = self._softmax(self.inbound_nodes[1].value)
+        self.m = self.y.shape[0]
+        correct_logprobs = -np.log(self.a[np.arange(self.y.shape[0]), self.y])
+        self.value = np.sum(correct_logprobs) / self.m
+
+    def backward(self):
+        da = self.a.copy()
+        da[np.arange(self.y.shape[0]), self.y] -= 1
+        self.gradients[self.inbound_nodes[0]] = -np.sum(np.log(self.a), axis=1)
+        self.gradients[self.inbound_nodes[1]] = da / self.m
+
+
+## Create graph
 def topological_sort(feed_dict):
     input_nodes = [ n for n in feed_dict.keys() ]
 
     G = {}
+    G_name = {}
     nodes = [ n for n in input_nodes ]
     while len(nodes) > 0:
         n = nodes.pop(0)
         if n not in G:
             G[n] = { 'in': set(), 'out': set() }
+            G_name[n.name] = { 'in': set(), 'out': set() }
         for m in n.outbound_nodes:
             if m not in G:
                 G[m] = { 'in': set(), 'out': set() }
+                G_name[m.name] = { 'in': set(), 'out': set() }
             G[n]['out'].add(m)
             G[m]['in'].add(n)
+            G_name[n.name]['out'].add(m.name)
+            G_name[m.name]['in'].add(n.name)
             nodes.append(m)
 
     L = []
@@ -125,6 +170,8 @@ def forward_and_backward(graph, training=True):
         for n in graph[::-1]:  # Extended slice - reverse order
             n.backward()
 
+
+## Optimizer
 def sgd_update(trainables, learning_rate=0.2):
     for t in trainables:
         t.value -= learning_rate * t.gradients[t]
