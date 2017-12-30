@@ -2,4 +2,5 @@
 *.swp
 __pycache__/
 miniflow_scalar.py
-Examples/mnist_data/
+Examples/mnist_data/*.*
+Examples/.ipynb_checkpoints/*.*
