@@ -72,6 +72,7 @@ class Sigmoid(Node):
             grad_cost = n.gradients[self]
             self.gradients[self.inbound_nodes[0]] += grad_cost*self.value*(1-self.value)  # (dC / dS) * (dS / dL)
 
+
 class Relu(Node):
     def __init__(self, node, name=None):
         Node.__init__(self, [node], name=name)
@@ -104,6 +105,7 @@ class MSE(Node):
     def backward(self):
         self.gradients[self.inbound_nodes[0]] = (2/self.m)*self.error  # dC / dy  
         self.gradients[self.inbound_nodes[1]] = (-2/self.m)*self.error # dC / da
+
 
 class SoftmaxCrossEntropy(Node):
     def __init__(self, y, a, name=None):
