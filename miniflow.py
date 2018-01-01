@@ -117,6 +117,11 @@ class SoftmaxCrossEntropy(Node):
     def forward(self):
         self.y = self.inbound_nodes[0].value
         self.a = self._softmax(self.inbound_nodes[1].value)
+
+        # If one hot encoding, change max value index
+        if self.y.shape[1] == self.a.shape[1]:
+            self.y = self.y.argmax(axis=1) 
+
         self.m = self.y.shape[0]
         correct_logprobs = -np.log(self.a[np.arange(self.y.shape[0]), self.y])
         self.value = np.sum(correct_logprobs) / self.m
@@ -174,6 +179,86 @@ def forward_and_backward(graph, training=True):
 
 
 ## Optimizer
-def sgd_update(trainables, learning_rate=0.2):
-    for t in trainables:
-        t.value -= learning_rate * t.gradients[t]
+class Optimizer(object):
+    def __init__(self, trainables = [], learning_rate=0.001):
+        self.trainables = trainables
+        self.learning_rate = learning_rate
+
+    def update(self):
+        raise NotImplemented  # Subclasses must implement this function to avoid errors.
+
+
+class SGD(Optimizer):
+    def __init__(self, trainables, learning_rate):
+        Optimizer.__init__(self, trainables, learning_rate)
+
+    def update(self):
+        for t in self.trainables:
+            t.value -= self.learning_rate * t.gradients[t]
+
+
+class Momentum(Optimizer):
+    def __init__(self, trainables, learning_rate, momentum=0.9):
+        Optimizer.__init__(self, trainables, learning_rate)
+        self.momentum = momentum
+        self.v = {}
+
+    def update(self):
+        for t in self.trainables:
+            if t not in self.v:
+                self.v[t] = np.zeros_like(t.value)
+            self.v[t] = self.momentum * self.v[t] - self.learning_rate * t.gradients[t]
+            t.value += self.v[t]
+
+
+class Adagrad(Optimizer):
+    def __init__(self, trainables, learning_rate, eps=1e-8):
+        Optimizer.__init__(self, trainables, learning_rate)
+        self.eps = eps
+        self.h = {}
+
+    def update(self):
+        for t in self.trainables:
+            if t not in self.h:
+                self.h[t] = np.zeros_like(t.value)
+            self.h[t] += t.gradients[t] * t.gradients[t]
+            t.value -= self.learning_rate * t.gradients[t] / (np.sqrt(self.h[t]) + self.eps) 
+
+class RMSProp(Optimizer):
+    def __init__(self, trainables, learning_rate, decay_rate=0.99, eps=1e-8):
+        Optimizer.__init__(self, trainables, learning_rate)
+        self.decay_rate = decay_rate
+        self.eps = eps
+        self.h = {}
+
+    def update(self):
+        for t in self.trainables:
+            if t not in self.h:
+                self.h[t] = np.zeros_like(t.value)
+            self.h[t] = self.decay_rate * self.h[t] + (1 - self.decay_rate) *  t.gradients[t] * t.gradients[t]
+            t.value -= self.learning_rate * t.gradients[t] / (np.sqrt(self.h[t]) + self.eps) 
+        
+
+class Adam(Optimizer):
+    def __init__(self, trainables, learning_rate, beta1=0.9, beta2=0.999, eps=1e-8):
+        Optimizer.__init__(self, trainables, learning_rate)
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.eps = eps
+        self.t = 0
+        self.m = {}
+        self.v = {}
+
+    def update(self):
+        self.t += 1
+        for t in self.trainables:
+            if t not in self.m:
+                self.m[t] = np.zeros_like(t.value)
+                self.v[t] = np.zeros_like(t.value)
+
+            self.m[t] = self.beta1 * self.m[t] + (1 - self.beta1) *  t.gradients[t]
+            self.v[t] = self.beta2 * self.v[t] + (1 - self.beta2) *  t.gradients[t] * t.gradients[t]
+            m_t = self.m[t] / (1 - self.beta1**self.t) # unbiased m
+            v_t = self.v[t] / (1 - self.beta2**self.t) # unbiased v
+            t.value -= self.learning_rate * m_t / np.sqrt(v_t + self.eps)
+
