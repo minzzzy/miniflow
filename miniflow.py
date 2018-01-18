@@ -50,8 +50,8 @@ class Linear(Node):
         self.gradients = {n: np.zeros_like(n.value) for n in self.inbound_nodes}  # Initialize to 0
         for n in self.outbound_nodes:
             grad_cost = n.gradients[self]
-            self.gradients[self.inbound_nodes[0]] += np.dot(grad_cost, self.inbound_nodes[1].value.T)  # dL / dX = W_T
-            self.gradients[self.inbound_nodes[1]] += np.dot(self.inbound_nodes[0].value.T, grad_cost)  # dL / dW = X_T
+            self.gradients[self.inbound_nodes[0]] += np.dot(grad_cost, self.inbound_nodes[1].value.T)  # dL/dX = dL/dY \dot W_T
+            self.gradients[self.inbound_nodes[1]] += np.dot(self.inbound_nodes[0].value.T, grad_cost)  # dL/dW = X_T \dot dL/dY
             self.gradients[self.inbound_nodes[2]] += np.sum(grad_cost, axis=0, keepdims=False)  # dL / db = 1
 
 
